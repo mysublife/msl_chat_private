@@ -1,1 +1,1 @@
-# msl_chat_private
+# MSL Private Chat Server
