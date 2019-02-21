@@ -1,0 +1,28 @@
+{
+  "name": "msl_chat_private",
+  "version": "1.0.0",
+  "description": "MSL Private Chat Server",
+  "main": "server/application.js",
+  "scripts": {
+    "start": "node --use_strict server/application.js",
+    "test": "mocha --reporter progress \"server/**/*.test.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mysublife/msl_chat_private.git"
+  },
+  "author": "MySubLife",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/mysublife/msl_chat_private/issues"
+  },
+  "homepage": "https://github.com/mysublife/msl_chat_private#readme",
+  "dependencies": {
+    "dotenv": "latest",
+    "ws": "latest"
+  },
+  "devDependencies": {
+    "chai": "latest",
+    "mocha": "latest"
+  }
+}
