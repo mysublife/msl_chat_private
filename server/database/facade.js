@@ -19,7 +19,7 @@ module.exports.userGet = function(username, sessionKey) {
 
       var result = {};
       result.id = results[0].id;
-      result.name = results[0].name;
+      result.nickname = results[0].name;
 
       resolve(result);
     })

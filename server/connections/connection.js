@@ -6,7 +6,7 @@ module.exports = class Connection {
   constructor(ws) {
     this._ws = ws;
 
-    this._user = null;
+    this._user = null; // {"id":xxx, "nickname":"xxxx"}
     this._last10MessagesTimeMs = new SizedArray(10);
   }
 
@@ -22,5 +22,9 @@ module.exports = class Connection {
     } catch (e) {
       console.log("Error sending message to connection: " + e.message);
     }
+  }
+
+  set user(user) {
+    this._user = user;
   }
 }

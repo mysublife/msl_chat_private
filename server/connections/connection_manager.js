@@ -65,6 +65,10 @@ module.exports = class ConnectionManager {
     }
   }
 
+  getConnection(connectionId) {
+    return this._connections[connectionId];
+  }
+
   _removeConnection(connectionId) {
     if (connectionId !== null && this._connections.hasOwnProperty(connectionId)) {
       delete this._connections[connectionId];
