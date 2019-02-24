@@ -1,0 +1,1 @@
+module.exports.CONNECTION_CLOSED = "CONNECTION_CLOSED";
