@@ -27,4 +27,8 @@ module.exports = class Connection {
   set user(user) {
     this._user = user;
   }
+
+  get user() {
+    return this._user;
+  }
 }

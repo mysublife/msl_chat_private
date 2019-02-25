@@ -2,6 +2,7 @@ const application = require("../application");
 const validators = require("../utils/validators");
 const facade = require("../database/facade")
 const messageTemplate = require("../message_template");
+const router = require("../router");
 
 module.exports = class MessageProcessorAuth {
   process(payload, connectionId) {
@@ -38,6 +39,6 @@ module.exports = class MessageProcessorAuth {
       return;
     }
 
-    // FIXME: Send contact list (where to put it ? in connection.js or somewhere else and user connection.sendObject())
+    router.sendContactListToConnection(connectionId);
   }
 }
