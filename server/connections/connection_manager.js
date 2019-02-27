@@ -6,6 +6,7 @@ const messageTemplate = require("../message_template");
 module.exports = class ConnectionManager {
   constructor() {
     this._connections = {};
+    this._users = {};
     this._nextConnectionId = 0;
     this._messageProcessor = new MessageProcessor();
   }
@@ -65,12 +66,19 @@ module.exports = class ConnectionManager {
     }
   }
 
-  getConnection(connectionId) {
-    return this._connections[connectionId];
+  get connections() {
+    return this._connections;
+  }
+
+  get users() {
+    return this._users;
   }
 
   _removeConnection(connectionId) {
     if (connectionId !== null && this._connections.hasOwnProperty(connectionId)) {
+      if (this._connections[connectionId].userId) {
+        this._users[this._connections[connectionId].userId].removeConnectionId(connectionId);
+      }
       delete this._connections[connectionId];
     }
   }

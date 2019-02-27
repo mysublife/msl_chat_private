@@ -6,10 +6,12 @@ module.exports = class Connection {
   constructor(ws) {
     this._ws = ws;
 
-    this._user = null; // {"id":xxx, "nickname":"xxxx"}
+    this._userId = null;
+
     this._last10MessagesTimeMs = new SizedArray(10);
   }
 
+  // Use connectionManager instead, so it removes connection if not available
   sendObject(obj) {
     if (this._ws.readyState !== WebSocket.OPEN) {
       if (this._ws.readyState === WebSocket.CLOSED || this._ws.readyState === WebSocket.CLOSING) {
@@ -24,11 +26,11 @@ module.exports = class Connection {
     }
   }
 
-  set user(user) {
-    this._user = user;
+  set userId(userId) {
+    this._userId = userId;
   }
 
-  get user() {
-    return this._user;
+  get userId() {
+    return this._userId;
   }
 }

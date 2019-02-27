@@ -55,7 +55,7 @@ module.exports.userGet = function(username, sessionKey) {
 
       let result = {};
       result.id = rows[0].id;
-      result.nickname = rows[0].name;
+      result.name = rows[0].name;
 
       resolve(result);
     })
