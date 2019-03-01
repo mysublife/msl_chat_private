@@ -7,7 +7,7 @@ module.exports = class User {
     this._id = id;
     this._name = name;
 
-    this._contactList = [];
+    this._contactList = []; // Array of objects {"id":xxx, "name":"xxx"}
     this._connectionsIds = new Set();
   }
 
