@@ -16,7 +16,7 @@ module.exports = class MessageProcessorMessaging {
     }
   }
 
-  async _processSignin(data, connectionId) {
+  async _processMessage(data, connectionId) {
     // FIXME: Add throttler
 
     if (!data.hasOwnProperty("target_user_id") ||
@@ -29,6 +29,17 @@ module.exports = class MessageProcessorMessaging {
     }
 
     let originUser = application.connectionManager.users[application.connectionManager.connections[connectionId].userId];
-    // FIXME: Check if user has target in his contact list
+    if (!originUser) {
+      return;
+    }
+
+    if (!originUser.hasContact(data.target_user_id)) {
+      application.connectionManager.sendToConnection(messageTemplate.get("messaging_invalid_contact"), connectionId);
+      return;
+    }
+
+    this._sendMessage(message, targetUserId, originUserId) {
+
+    }
   }
 };
