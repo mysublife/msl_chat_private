@@ -1,6 +1,6 @@
 const application = require("../application");
 const validators = require("../utils/validators");
-const facade = require("../database/facade")
+const facade = require("../database/facade");
 const messageTemplate = require("../message_template");
 const User = require("../connections/user");
 

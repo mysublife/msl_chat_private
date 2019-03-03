@@ -33,6 +33,25 @@ module.exports.contactListGet = function(userId) {
   });
 };
 
+module.exports.messageInsert = function(message, originUserId, targetUserId) {
+  return new Promise((resolve, reject) => {
+    // FIXME: Add field date_read_utc
+    let query = `
+      INSERT INTO d_chat_private_message(message, date_sent_utc, date_ack_utc, user_origin, user_target)
+      VALUES (?, UTC_TIMESTAMP(), NULL, ?, ?)
+    `;
+
+    let args = [message, originUserId, targetUserId];
+
+    database.query(query, args)
+    .then((rows) => {
+      resolve(rows);
+    })
+    .catch((err) => {
+      reject(err);
+    });
+  });
+};
 
 module.exports.userGet = function(username, sessionKey) {
   return new Promise((resolve, reject) => {

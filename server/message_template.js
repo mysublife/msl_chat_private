@@ -3,6 +3,7 @@ const messageTemplates = {
   "auth_missing_credentials":{"type":"auth", "payload":{"key":"missing_credentials", "data":null}},
   "messaging_invalid_message":{"type":"messaging", "payload":{"key":"invalid_message", "data":null}},
   "messaging_invalid_contact":{"type":"messaging", "payload":{"key":"invalid_contact", "data":null}},
+  "messaging_message":{"type":"messaging", "payload":{"key":"message", "data":{"id":null, "origin_user_id":null, "target_user_id":null, "message":null, "date_utc":null}}},
   "signaling_connection_ack":{"type":"signaling", "payload":{"key":"connection_ack", "data":"Greetings my geeky friend, how is life treating you today?"}},
   "status_contact_list":{"type":"status", "payload":{"key":"contact_list", "data":null}},
 };

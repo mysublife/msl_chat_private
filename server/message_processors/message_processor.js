@@ -18,7 +18,7 @@ module.exports = class MessageProcessor {
       case "auth":
         messageProcessor = this._messageProcessorAuth;
         break;
-      case "message":
+      case "messaging":
         messageProcessor = this._messageProcessorMessaging;
         break;
       default:

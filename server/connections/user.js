@@ -9,6 +9,7 @@ module.exports = class User {
 
     this._contactList = []; // Array of objects {"id":xxx, "name":"xxx"}
     this._contactListIds = []; // Array of contact Ids to search faster
+
     this._connectionsIds = new Set();
   }
 
@@ -17,8 +18,16 @@ module.exports = class User {
     this._contactListIds = this._contactList.map(obj => obj.id);
   }
 
+  get connectionsId() {
+    return this._connectionsIds;
+  }
+
   get contactList() {
     return this._contactList;
+  }
+
+  get id() {
+    return this._id;
   }
 
   hasContact(userId) {

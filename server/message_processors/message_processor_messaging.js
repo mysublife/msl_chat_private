@@ -1,4 +1,5 @@
 const application = require("../application");
+const facade = require("../database/facade");
 const messageTemplate = require("../message_template");
 const validators = require("../utils/validators");
 
@@ -21,7 +22,7 @@ module.exports = class MessageProcessorMessaging {
 
     if (!data.hasOwnProperty("target_user_id") ||
         !data.hasOwnProperty("message") ||
-        !isNaN(data.target_user_id) ||
+        isNaN(data.target_user_id) ||
         data.target_user_id < 1 ||
         !validators.validateMessage(data.message)) {
       application.connectionManager.sendToConnection(messageTemplate.get("messaging_invalid_message"), connectionId);
@@ -30,6 +31,7 @@ module.exports = class MessageProcessorMessaging {
 
     let originUser = application.connectionManager.users[application.connectionManager.connections[connectionId].userId];
     if (!originUser) {
+      // TODO: internal error
       return;
     }
 
@@ -38,8 +40,32 @@ module.exports = class MessageProcessorMessaging {
       return;
     }
 
-    this._sendMessage(message, targetUserId, originUserId) {
+    this._sendMessage(data.message, originUser.id, data.target_user_id);
+  }
 
+  async _sendMessage(message, originUserId, targetUserId) {
+    // Insert in DB
+    let result = await facade.messageInsert(message, originUserId, targetUserId);
+
+    // TODO: Prepare message to send with data and id
+    let message2Send = messageTemplate.get("messaging_message");
+    message2Send.payload.data.id = result.insertId;
+    message2Send.payload.data.origin_user_id = originUserId;
+    message2Send.payload.data.target_user_id = targetUserId;
+    message2Send.payload.data.message = message;
+    message2Send.payload.data.date_utc = null;
+
+    // Send to self (to be visible on all devices)
+    let originUserConnectionIds = application.connectionManager.users[originUserId].connectionIds;
+    for (let connectionId of originUserConnectionIds) {
+      application.connectionManager.sendToConnection(message2Send, connectionId);
     }
+
+    // Send to all target connections
+    let targetUserConnectionIds = application.connectionManager.users[targetUserId].connectionIds;
+    for (let connectionId of targetUserConnectionIds) {
+      application.connectionManager.sendToConnection(message2Send, connectionId);
+    }
+
   }
 };
