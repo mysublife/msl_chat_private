@@ -25,6 +25,25 @@ describe("validateEmail", () => {
 	});
 });
 
+describe("validateMessage", () => {
+	it("Invalid string", () => {
+    chai.expect(validators.validateMessage(null)).to.equal(false);
+    chai.expect(validators.validateMessage("")).to.equal(false);
+    chai.expect(validators.validateMessage(123)).to.equal(false);
+  });
+  it("Ok string", () => {
+    chai.expect(validators.validateMessage("my message")).to.equal(true);
+    chai.expect(validators.validateMessage("my message\nwith new line")).to.equal(true);
+
+    let str = "a".repeat(validators.MESSAGE_LENGTH_MAX);
+    chai.expect(validators.validateMessage(str)).to.equal(true);
+  });
+  it("String too long", () => {
+    let str = "a".repeat(validators.MESSAGE_LENGTH_MAX + 1);
+    chai.expect(validators.validateMessage(str)).to.equal(false);
+  });
+});
+
 describe("validateSessionKey", () => {
   it("Empty string", () => {
 		chai.expect(validators.validateSessionKey("")).to.equal(false);

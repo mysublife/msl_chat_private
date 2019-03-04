@@ -25,7 +25,7 @@ module.exports = class MessageProcessorMessaging {
         isNaN(data.target_user_id) ||
         data.target_user_id < 1 ||
         !validators.validateMessage(data.message)) {
-      application.connectionManager.sendToConnection(messageTemplate.get("messaging_invalid_message"), connectionId);
+      application.connectionManager.sendToConnection(messageTemplate.get("messaging_error_invalid_message"), connectionId);
       return;
     }
 
@@ -36,7 +36,7 @@ module.exports = class MessageProcessorMessaging {
     }
 
     if (!originUser.hasContact(data.target_user_id)) {
-      application.connectionManager.sendToConnection(messageTemplate.get("messaging_invalid_contact"), connectionId);
+      application.connectionManager.sendToConnection(messageTemplate.get("messaging_error_invalid_contact"), connectionId);
       return;
     }
 
@@ -47,25 +47,28 @@ module.exports = class MessageProcessorMessaging {
     // Insert in DB
     let result = await facade.messageInsert(message, originUserId, targetUserId);
 
-    // TODO: Prepare message to send with data and id
+    // Prepare message to send with data and id
     let message2Send = messageTemplate.get("messaging_message");
     message2Send.payload.data.id = result.insertId;
     message2Send.payload.data.origin_user_id = originUserId;
     message2Send.payload.data.target_user_id = targetUserId;
     message2Send.payload.data.message = message;
-    message2Send.payload.data.date_utc = null;
+    message2Send.payload.data.date_utc = new Date().toISOString(); // Not the exact same time as in DB, but good enough to avoid 2nd query on each insert
 
-    // Send to self (to be visible on all devices)
-    let originUserConnectionIds = application.connectionManager.users[originUserId].connectionIds;
-    for (let connectionId of originUserConnectionIds) {
-      application.connectionManager.sendToConnection(message2Send, connectionId);
+    if (application.connectionManager.users.hasOwnProperty(originUserId)) { // Origin user is still connected
+      // Send to self (to be visible on all devices)
+      let originUserConnectionIds = application.connectionManager.users[originUserId].connectionIds;
+      for (let connectionId of originUserConnectionIds) {
+        application.connectionManager.sendToConnection(message2Send, connectionId);
+      }
     }
 
     // Send to all target connections
-    let targetUserConnectionIds = application.connectionManager.users[targetUserId].connectionIds;
-    for (let connectionId of targetUserConnectionIds) {
-      application.connectionManager.sendToConnection(message2Send, connectionId);
+    if (application.connectionManager.users.hasOwnProperty(targetUserId)) { // Target user is connected
+      let targetUserConnectionIds = application.connectionManager.users[targetUserId].connectionIds;
+      for (let connectionId of targetUserConnectionIds) {
+        application.connectionManager.sendToConnection(message2Send, connectionId);
+      }
     }
-
   }
 };

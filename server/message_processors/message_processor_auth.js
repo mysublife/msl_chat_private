@@ -25,13 +25,13 @@ module.exports = class MessageProcessorAuth {
         !data.hasOwnProperty("session_key") ||
         !validators.validateEmail(data.username) ||
         !validators.validateSessionKey(data.session_key)) {
-      application.connectionManager.sendToConnection(messageTemplate.get("auth_missing_credentials"), connectionId);
+      application.connectionManager.sendToConnection(messageTemplate.get("auth_error_missing_credentials"), connectionId);
       return;
     }
 
     let user = await facade.userGet(data.username, data.session_key);
     if (!user) {
-      application.connectionManager.sendToConnection(messageTemplate.get("auth_invalid_credentials"), connectionId);
+      application.connectionManager.sendToConnection(messageTemplate.get("auth_error_invalid_credentials"), connectionId);
       return;
     }
 
@@ -45,5 +45,7 @@ module.exports = class MessageProcessorAuth {
     let message = messageTemplate.get("status_contact_list");
     message.payload.data = application.connectionManager.users[user.id].contactList;
     application.connectionManager.sendToConnection(message, connectionId);
+
+    // FIXME: Send unread messages
   }
 }

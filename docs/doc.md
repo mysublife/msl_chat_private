@@ -2,7 +2,7 @@
 `wss://dev.mysublife.com:8090`
 
 # Messages from client
-## Authentication
+## Auth/Signin
 ```
 {
   "type":"auth",
@@ -15,7 +15,7 @@
   }
 }
 ```
-## Message
+## Messaging/Message
 ```
 {
   "type":"messaging",
@@ -24,6 +24,18 @@
     "data":{
       "target_user_id":5432,
       "message":"Hello world"
+    }
+  }
+}
+```
+## Signaling/MessageRead
+```
+{
+  "type":"signaling",
+  "payload":{
+    "key":"message_read",
+    "data":{
+      "last_message_id":123
     }
   }
 }

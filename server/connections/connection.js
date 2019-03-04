@@ -19,11 +19,9 @@ module.exports = class Connection {
       }
     }
 
-    try {
-      this._ws.send(JSON.stringify(obj));
-    } catch (e) {
-      console.log("Error sending message to connection: " + e.message);
-    }
+    this._ws.send(JSON.stringify(obj), (err) => {
+      console.log("Error sending message to connection: " + err.message);
+    });
   }
 
   set userId(userId) {

@@ -18,7 +18,7 @@ module.exports = class User {
     this._contactListIds = this._contactList.map(obj => obj.id);
   }
 
-  get connectionsId() {
+  get connectionIds() {
     return this._connectionsIds;
   }
 
