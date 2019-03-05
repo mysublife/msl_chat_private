@@ -2,7 +2,8 @@
 `wss://dev.mysublife.com:8090`
 
 # Messages from client
-## Auth/Signin
+## auth
+### signin
 ```
 {
   "type":"auth",
@@ -15,20 +16,35 @@
   }
 }
 ```
-## Messaging/Message
+## messaging
+### message
 ```
 {
   "type":"messaging",
   "payload":{
     "key":"message",
     "data":{
-      "target_user_id":5432,
+      "user_target_id":5432,
       "message":"Hello world"
     }
   }
 }
 ```
-## Signaling/MessageRead
+### get_conversation
+```
+{
+  "type":"messaging",
+  "payload":{
+    "key":"get_conversation",
+    "data":{
+      "user_target_id":5432,
+      "before_message_id":123
+    }
+  }
+}
+```
+## signaling
+### message_read
 ```
 {
   "type":"signaling",

@@ -27,7 +27,7 @@ module.exports = class ServerFactory {
     });
 
     return app;
-  };
+  }
 
   _createServerUnsecure() {
     var httpServ = require('http');
@@ -35,9 +35,10 @@ module.exports = class ServerFactory {
     return httpServ.createServer(this._processRequest).listen(process.env.PORT);
   }
 
+  // FIXME: Keep dummy processing, but have also a request processing for contaclist changes
   // dummy request processing
   _processRequest(req, res) {
     res.writeHead(404);
     res.end();
-  };
+  }
 }

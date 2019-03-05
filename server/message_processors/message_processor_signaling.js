@@ -17,8 +17,6 @@ module.exports = class MessageProcessorSignaling {
   }
 
   async _processMessageRead(data, connectionId) {
-    // FIXME: Add throttler
-
     if (!data.hasOwnProperty("last_message_id") ||
         isNaN(data.last_message_id) ||
         data.last_message_id < 1) {
@@ -36,10 +34,10 @@ module.exports = class MessageProcessorSignaling {
 
     await facade.messageUpdateDateRead(data.last_message_id, message.user_origin, user.id); // target is origin, user is marking as "read" the messages he is the target
 
-    // FIXME: Send message read to user other connections
+    // Send message read to user other connections
     let message2Send = messageTemplate.get("signaling_message_read");
-    //message2Send...
-    //message2Send
+    message2Send.payload.data.last_message_id = data.last_message_id;
+    message2Send.payload.data.user_origin_id = message.user_origin;
 
     let userConnectionIds = user.connectionIds;
     for (let connectionId of userConnectionIds) {

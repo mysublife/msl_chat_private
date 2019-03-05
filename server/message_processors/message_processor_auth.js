@@ -19,8 +19,6 @@ module.exports = class MessageProcessorAuth {
   }
 
   async _processSignin(data, connectionId) {
-    // FIXME: Add throttler
-
     if (!data.hasOwnProperty("username") ||
         !data.hasOwnProperty("session_key") ||
         !validators.validateEmail(data.username) ||
@@ -29,23 +27,39 @@ module.exports = class MessageProcessorAuth {
       return;
     }
 
+    // Get user
     let user = await facade.userGet(data.username, data.session_key);
     if (!user) {
       application.connectionManager.sendToConnection(messageTemplate.get("auth_error_invalid_credentials"), connectionId);
       return;
     }
 
+    // Load contact list
     if (!application.connectionManager.users.hasOwnProperty(user.id)) {
       application.connectionManager.users[user.id] = new User(user.id, user.name);
       await application.connectionManager.users[user.id].loadContactList();
     }
+
+    // Store connection and user references in objects
     application.connectionManager.connections[connectionId].userId = user.id;
     application.connectionManager.users[user.id].addConnectionId(connectionId);
 
-    let message = messageTemplate.get("status_contact_list");
-    message.payload.data = application.connectionManager.users[user.id].contactList;
-    application.connectionManager.sendToConnection(message, connectionId);
+    this._sendContactList(user.id, connectionId);
+    this._sendUnreadMessages(user.id, connectionId);
+  }
 
-    // FIXME: Send unread messages
+  _sendContactList(userId, connectionId) {
+    let message = messageTemplate.get("status_contact_list");
+    message.payload.data = application.connectionManager.users[userId].contactList;
+    application.connectionManager.sendToConnection(message, connectionId);
+  }
+
+  async _sendUnreadMessages(userId, connectionId) {
+    let messagesUnread = await facade.messageGetUnread(userId);
+    for (let i = 0; i < messagesUnread.length; ++i) {
+      let message = messageTemplate.get("messaging_message");
+      message.payload.data = messagesUnread[i];
+      application.connectionManager.sendToConnection(message, connectionId);
+    }
   }
 }

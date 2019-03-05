@@ -14,61 +14,88 @@ module.exports = class MessageProcessorMessaging {
       case "message":
         this._processMessage(payload.data, connectionId)
         break;
+      case "get_conversation":
+        this._processGetConversation(payload, connectionId);
+        break;
     }
   }
 
-  async _processMessage(data, connectionId) {
-    // FIXME: Add throttler
-
-    if (!data.hasOwnProperty("target_user_id") ||
+  _processMessage(data, connectionId) {
+    if (!data.hasOwnProperty("user_target_id") ||
         !data.hasOwnProperty("message") ||
-        isNaN(data.target_user_id) ||
-        data.target_user_id < 1 ||
+        isNaN(data.user_target_id) ||
+        data.user_target_id < 1 ||
         !validators.validateMessage(data.message)) {
       application.connectionManager.sendToConnection(messageTemplate.get("messaging_error_invalid_message"), connectionId);
       return;
     }
 
-    let originUser = application.connectionManager.users[application.connectionManager.connections[connectionId].userId];
-    if (!originUser) {
+    let userOrigin = application.connectionManager.users[application.connectionManager.connections[connectionId].userId];
+    if (!userOrigin) {
       // TODO: internal error
       return;
     }
 
-    if (!originUser.hasContact(data.target_user_id)) {
+    if (!userOrigin.hasContact(data.user_target_id)) {
       application.connectionManager.sendToConnection(messageTemplate.get("messaging_error_invalid_contact"), connectionId);
       return;
     }
 
-    this._sendMessage(data.message, originUser.id, data.target_user_id);
+    this._sendMessage(data.message, userOrigin.id, data.user_target_id);
   }
 
-  async _sendMessage(message, originUserId, targetUserId) {
+  async _sendMessage(message, userOriginId, userTargetId) {
     // Insert in DB
-    let result = await facade.messageInsert(message, originUserId, targetUserId);
+    let result = await facade.messageInsert(message, userOriginId, userTargetId);
 
     // Prepare message to send with data and id
     let message2Send = messageTemplate.get("messaging_message");
     message2Send.payload.data.id = result.insertId;
-    message2Send.payload.data.origin_user_id = originUserId;
-    message2Send.payload.data.target_user_id = targetUserId;
+    message2Send.payload.data.user_origin_id = userOriginId;
+    message2Send.payload.data.user_target_id = userTargetId;
     message2Send.payload.data.message = message;
-    message2Send.payload.data.date_utc = new Date().toISOString(); // Not the exact same time as in DB, but good enough to avoid 2nd query on each insert
+    message2Send.payload.data.date_sent_utc = new Date().toISOString(); // Not the exact same time as in DB, but good enough to avoid 2nd query on each insert
 
-    if (application.connectionManager.users.hasOwnProperty(originUserId)) { // Origin user is still connected
+    if (application.connectionManager.users.hasOwnProperty(userOriginId)) { // Origin user is still connected
       // Send to self (to be visible on all devices)
-      let originUserConnectionIds = application.connectionManager.users[originUserId].connectionIds;
-      for (let connectionId of originUserConnectionIds) {
+      let userOriginConnectionIds = application.connectionManager.users[userOriginId].connectionIds;
+      for (let connectionId of userOriginConnectionIds) {
         application.connectionManager.sendToConnection(message2Send, connectionId);
       }
     }
 
     // Send to all target connections
-    if (application.connectionManager.users.hasOwnProperty(targetUserId)) { // Target user is connected
-      let targetUserConnectionIds = application.connectionManager.users[targetUserId].connectionIds;
-      for (let connectionId of targetUserConnectionIds) {
+    if (application.connectionManager.users.hasOwnProperty(userTargetId)) { // Target user is connected
+      let userTargetConnectionIds = application.connectionManager.users[userTargetId].connectionIds;
+      for (let connectionId of userTargetConnectionIds) {
         application.connectionManager.sendToConnection(message2Send, connectionId);
       }
     }
+  }
+
+  async _processGetConversation(data, connectionId) {
+    if (!data.hasOwnProperty("user_target_id") ||
+        !data.hasOwnProperty("before_message_id") ||
+        isNaN(data.user_target_id) ||
+        data.user_target_id < 1 ||
+        (data.before_message_id !== null && (isNaN(data.before_message_id) || data.before_message_id < 1))) {
+      application.connectionManager.sendToConnection(messageTemplate.get("messaging_error_invalid_get_conversation"), connectionId);
+      return;
+    }
+
+    let user = application.connectionManager.users[application.connectionManager.connections[connectionId].userId];
+    if (!user) {
+      // TODO: internal error
+      return;
+    }
+
+    if (!user.hasContact(data.user_target_id)) {
+      application.connectionManager.sendToConnection(messageTemplate.get("messaging_error_invalid_contact"), connectionId);
+      return;
+    }
+
+    let message = messageTemplate.get("messaging_conversation");
+    message.payload.data = await facade.messageGetConversation(user.id, data.user_target_id, data.before_message_id);
+    application.connectionManager.sendToConnection(message, connectionId);
   }
 };

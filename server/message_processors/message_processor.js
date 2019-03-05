@@ -15,6 +15,8 @@ module.exports = class MessageProcessor {
       return;
     }
 
+    // FIXME: Add overall throttler (i.e 10 auth, 10 messaging, 100 signaling...)
+
     let messageProcessor;
     switch (message.type) {
       case "auth":
