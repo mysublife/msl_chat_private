@@ -36,7 +36,7 @@ module.exports = class ConnectionManager {
       try {
         this._messageProcessor.process(obj, connectionId);
       } catch (e) {
-        console.log("Application would have crashed: " + e.stack);
+        console.log("Failed to process message: " + e.stack);
       }
     });
 

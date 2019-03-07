@@ -13,7 +13,11 @@ const wss = new WebSocket.Server({ server: app });
 const connectionManager = new ConnectionManager();
 
 wss.on("connection", (ws, req) => {
-  connectionManager.newConnection(ws, req);
+  try {
+    connectionManager.newConnection(ws, req);
+  } catch (e) {
+    console.log("Application would have crashed: " + e.stack);
+  }
 });
 
 module.exports.connectionManager = connectionManager;

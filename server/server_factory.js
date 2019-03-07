@@ -1,6 +1,11 @@
-const fs = require('fs');
+const fs = require("fs");
+const HTTPRouter = require("./http/http_router");
 
 module.exports = class ServerFactory {
+  constructor() {
+    this._httpRouter = new HTTPRouter();
+  }
+
   createServer(secure) {
     if (secure) {
       return this._createServerSecure();
@@ -15,7 +20,7 @@ module.exports = class ServerFactory {
     var app = httpServ.createServer({
       key: fs.readFileSync(process.env.PATH_TO_KEY),
       cert: fs.readFileSync(process.env.PATH_TO_CRT)
-    }, this._processRequest).listen(process.env.PORT);
+    }, this._processHTTPRequest.bind(this)).listen(process.env.PORT);
 
     var timeout;
     fs.watch(process.env.PATH_TO_CRT, () => {
@@ -32,13 +37,10 @@ module.exports = class ServerFactory {
   _createServerUnsecure() {
     var httpServ = require('http');
 
-    return httpServ.createServer(this._processRequest).listen(process.env.PORT);
+    return httpServ.createServer(this._processHTTPRequest.bind(this)).listen(process.env.PORT);
   }
 
-  // FIXME: Keep dummy processing, but have also a request processing for contaclist changes
-  // dummy request processing
-  _processRequest(req, res) {
-    res.writeHead(404);
-    res.end();
+  _processHTTPRequest(req, res) {
+    this._httpRouter.process(req, res);
   }
 }

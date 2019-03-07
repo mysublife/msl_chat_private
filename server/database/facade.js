@@ -103,7 +103,7 @@ module.exports.messageGetUnread = function(userTargetId) {
         user_origin,
         user_target
       FROM d_chat_private_message
-      WHERE user_target = ? AND date_reat_utc IS NULL
+      WHERE user_target = ? AND date_read_utc IS NULL
       ORDER BY id ASC
     `;
 

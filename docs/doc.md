@@ -1,6 +1,9 @@
 # Test server
 `wss://dev.mysublife.com:8090`
 
+# HTTP call to update contact list
+`https://dev.mysublife.com:8090/contact_list_update?user_id=123&http_request_key=#KEY#`
+
 # Messages from client
 ## auth
 ### signin
@@ -11,7 +14,7 @@
     "key":"signin",
     "data":{
       "username":"user1@local.dns",
-      "session_key":"c907f10addddf5a3f16991928ef152f175fd4bbdc404670d695487687d3fdad0b243c70f3332f259cae5b379ef738960024fcdd60e6f52d6e181913339a57bc1"
+      "session_key":"a0e1681807b90c8ee535662cf1f153891cfa57d4f86f252122fce1e2450ca58f6c21b122ebdae80befb63272c816d3488eb97221a2344806a6ea1ec1b3789549"
     }
   }
 }

@@ -20,7 +20,9 @@ module.exports = class Connection {
     }
 
     this._ws.send(JSON.stringify(obj), (err) => {
-      console.log("Error sending message to connection: " + err.message);
+      if (err && err.message) {
+        console.log("Error sending message to connection: " + err.message);
+      }
     });
   }
 

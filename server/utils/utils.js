@@ -7,4 +7,4 @@ module.exports.getClientIp = function(req) {
   } else {
     return req.connection.remoteAddress;
   }
-}
+};
