@@ -34,6 +34,8 @@ module.exports = class MessageProcessorAuth {
       return;
     }
 
+    application.connectionManager.sendToConnection(messageTemplate.get("signaling_signin_success"), connectionId);
+
     // Load contact list
     if (!application.connectionManager.users.hasOwnProperty(user.id)) {
       application.connectionManager.users[user.id] = new User(user.id, user.name);

@@ -9,6 +9,7 @@ const messageTemplates = {
   "messaging_message":{"type":"messaging", "payload":{"key":"message", "data":{"id":null, "user_origin_id":null, "user_target_id":null, "message":null, "date_sent_utc":null}}},
   "messaging_conversation":{"type":"messaging", "payload":{"key":"conversation", "data":[]}},
   "signaling_connection_ack":{"type":"signaling", "payload":{"key":"connection_ack", "data":"Greetings my geeky friend, how is life treating you today?"}},
+  "signaling_signin_success":{"type":"signaling", "payload":{"key":"signin_success", "data":null}},
   "status_contact_list":{"type":"status", "payload":{"key":"contact_list", "data":null}},
 };
 
