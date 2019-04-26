@@ -68,9 +68,10 @@ module.exports.messageGet = function(messageId) {
 
 module.exports.messageGetConversation = function(user1Id, user2Id, beforeMessageId) {
   return new Promise((resolve, reject) => {
+    // NOTE: ORDER DESC AND ASC BECAUSE WE WANT ONLY THE LAST 25 (DESC), BUT SORTED BY ID (ASC)
     let query = `
       SELECT t.*
-      FROM ( '
+      FROM (
         SELECT id, user_origin, user_target, date_sent_utc, message
         FROM d_chat_private_message
         WHERE ((user_origin = ? AND user_target = ?) OR (user_origin = ? AND user_target = ?))

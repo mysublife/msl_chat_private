@@ -15,7 +15,7 @@ module.exports = class MessageProcessorMessaging {
         this._processMessage(payload.data, connectionId)
         break;
       case "get_conversation":
-        this._processGetConversation(payload, connectionId);
+        this._processGetConversation(payload.data, connectionId);
         break;
     }
   }
