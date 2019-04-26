@@ -95,7 +95,8 @@ module.exports = class MessageProcessorMessaging {
     }
 
     let message = messageTemplate.get("messaging_conversation");
-    message.payload.data = await facade.messageGetConversation(user.id, data.user_target_id, data.before_message_id);
+    message.payload.data.messages = await facade.messageGetConversation(user.id, data.user_target_id, data.before_message_id);
+    message.payload.data.user_target_id = data.user_target_id;
     application.connectionManager.sendToConnection(message, connectionId);
   }
 };
