@@ -6,7 +6,8 @@ const pool = mysql.createPool({
   password : !process.env.DATABASE_PASSWORD ? "":process.env.DATABASE_PASSWORD,
   charset  : "utf8mb4",
   database : process.env.DATABASE_NAME,
-  port     : process.env.DATABASE_PORT
+  port     : process.env.DATABASE_PORT,
+  timezone : "utc"
 });
 
 function getConnection() {
