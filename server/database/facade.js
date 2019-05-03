@@ -72,7 +72,7 @@ module.exports.messageGetConversation = function(user1Id, user2Id, beforeMessage
     let query = `
       SELECT t.*
       FROM (
-        SELECT id, user_origin, user_target, date_sent_utc, message
+        SELECT id, user_origin AS user_origin_id, user_target AS user_target_id, date_sent_utc, message
         FROM d_chat_private_message
         WHERE ((user_origin = ? AND user_target = ?) OR (user_origin = ? AND user_target = ?))
         AND (? IS NULL OR id < ?)
