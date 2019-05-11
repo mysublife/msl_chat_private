@@ -32,12 +32,12 @@ module.exports = class MessageProcessorSignaling {
 
     let message = await facade.messageGet(data.last_message_id);
 
-    await facade.messageUpdateDateRead(data.last_message_id, message.user_origin, user.id); // target is origin, user is marking as "read" the messages he is the target
+    await facade.messageUpdateDateRead(data.last_message_id, message.user_origin_id, user.id); // target is origin, user is marking as "read" the messages he is the target
 
     // Send message read to user other connections
     let message2Send = messageTemplate.get("signaling_message_read");
     message2Send.payload.data.last_message_id = data.last_message_id;
-    message2Send.payload.data.user_origin_id = message.user_origin;
+    message2Send.payload.data.user_origin_id = message.user_origin_id;
 
     let userConnectionIds = user.connectionIds;
     for (let connectionId of userConnectionIds) {

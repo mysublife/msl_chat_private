@@ -41,8 +41,8 @@ module.exports.messageGet = function(messageId) {
         message,
         date_sent_utc,
         date_read_utc,
-        user_origin,
-        user_target
+        user_origin AS user_origin_id,
+        user_target AS user_target_id
       FROM d_chat_private_message
       WHERE id = ?
     `;
@@ -101,8 +101,8 @@ module.exports.messageGetUnread = function(userTargetId) {
         message,
         date_sent_utc,
         date_read_utc,
-        user_origin,
-        user_target
+        user_origin AS user_origin_id,
+        user_target AS user_target_id
       FROM d_chat_private_message
       WHERE user_target = ? AND date_read_utc IS NULL
       ORDER BY id ASC
